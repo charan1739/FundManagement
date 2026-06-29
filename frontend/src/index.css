@@ -7,41 +7,60 @@
   * { box-sizing: border-box; }
   html { font-family: 'Inter', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
   body { @apply bg-surface text-brand; min-height: 100vh; }
-  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-thumb { @apply bg-accent rounded-full; }
+  ::-webkit-scrollbar-track { @apply bg-transparent; }
   input[type=number]::-webkit-outer-spin-button,
   input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
 }
 
 @layer components {
   /* ─── App Shell ─────────────────────────────────────────────── */
+  /* Legacy .app-shell kept for compat, new layout uses flex row in AppShell.jsx */
   .app-shell {
-    @apply max-w-md mx-auto min-h-screen bg-surface flex flex-col;
+    @apply max-w-2xl mx-auto min-h-screen bg-surface flex flex-col;
     box-shadow: 0 0 60px rgba(30,27,75,0.06);
   }
-  .page-content { @apply flex-1 overflow-y-auto pb-20; }
+  .page-content { @apply flex-1 overflow-y-auto pb-20 lg:pb-6; }
+
+  /* ─── Desktop content constraints ─────────────────────────── */
+  /* Wraps page body on lg+ to keep readable line lengths */
+  .page-container {
+    @apply w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
 
   /* ─── Cards ─────────────────────────────────────────────────── */
   .card { @apply bg-card rounded-2xl border border-accent shadow-card; }
   .list-item { @apply flex items-center gap-3 px-4 py-3.5 border-b border-accent/60 last:border-0; }
 
   /* ─── TopBar ─────────────────────────────────────────────────── */
-  .top-bar { @apply flex items-center gap-3 px-4 py-3 bg-card border-b border-accent sticky top-0 z-20; }
+  .top-bar { @apply flex items-center gap-3 px-4 py-3 bg-card border-b border-accent sticky top-0 z-20 lg:px-6; }
   .top-bar-title { @apply text-base font-semibold text-brand flex-1 truncate; }
 
   /* ─── Bottom Nav ─────────────────────────────────────────────── */
   .bottom-nav {
-    @apply fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card border-t border-accent flex z-20;
+    @apply fixed bottom-0 left-0 right-0 bg-card border-t border-accent flex z-20 lg:hidden;
+    /* On tablet, center like mobile */
+    max-width: 100%;
   }
-  .nav-item { @apply flex-1 flex flex-col items-center justify-center py-2.5 gap-0.5 transition-colors; }
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .bottom-nav {
+      max-width: 42rem;
+      left: 50%;
+      transform: translateX(-50%);
+      right: auto;
+      width: 100%;
+    }
+  }
+  .nav-item { @apply flex-1 flex flex-col items-center justify-center py-2.5 gap-0.5 transition-colors relative; }
   .nav-item.active { @apply text-primary; }
   .nav-item.inactive { @apply text-brand-muted; }
   .nav-label { @apply text-[10px] font-medium; }
 
   /* ─── Balance Banner ─────────────────────────────────────────── */
-  .balance-banner { @apply bg-primary px-5 py-5; }
+  .balance-banner { @apply bg-primary px-5 py-5 lg:px-8 lg:py-6; }
   .balance-label { @apply text-brand-sub text-xs font-semibold uppercase tracking-wider mb-1; }
-  .balance-amount { @apply text-brand text-3xl font-bold tabular-nums; }
+  .balance-amount { @apply text-brand text-3xl font-bold tabular-nums lg:text-4xl; }
 
   /* ─── Inputs ─────────────────────────────────────────────────── */
   .field-label { @apply block text-sm font-medium text-brand mb-1.5; }
@@ -101,10 +120,22 @@
 
   /* ─── File chip ─────────────────────────────────────────────────── */
   .file-chip { @apply flex items-center gap-2 px-3 py-1.5 bg-accent rounded-lg text-xs text-brand-sub; }
+
+  /* ─── Responsive page header ─────────────────────────────────── */
+  /* On desktop, the back button + title row used on inner pages */
+  .page-header {
+    @apply flex items-center gap-3 px-4 py-4 bg-card border-b border-accent sticky top-0 z-10 lg:px-6 lg:py-5;
+  }
+  .page-header-title {
+    @apply text-lg font-bold text-brand truncate lg:text-xl;
+  }
 }
 
 @layer utilities {
   .tabular-nums { font-variant-numeric: tabular-nums; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
 }
+
+

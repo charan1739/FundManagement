@@ -9,7 +9,7 @@ const BottomNav = () => {
   const navClass = ({ isActive }) => `nav-item ${isActive ? 'active' : 'inactive'}`;
 
   return (
-    <nav className="bottom-nav pb-safe">
+    <nav className="bottom-nav pb-safe lg:hidden">
       <NavLink to="/" end className={navClass}>
         {({ isActive }) => (
           <>

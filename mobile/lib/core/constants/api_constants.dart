@@ -1,8 +1,15 @@
 class ApiConstants {
   ApiConstants._();
 
-  static const String baseUrl = 'http://10.0.2.2:5000/api';
-  static const String socketUrl = 'http://10.0.2.2:5000';
+  // Inject at build/run time via: flutter run --dart-define=BASE_URL=http://10.0.2.2:5000
+  // Falls back to the deployed Render backend if not provided.
+  static const String _base = String.fromEnvironment(
+    'BASE_URL',
+    defaultValue: 'https://fundmanagement-xlr5.onrender.com',
+  );
+
+  static const String baseUrl = '$_base/api';
+  static const String socketUrl = _base;
 
   // Auth
   static const String register = '/auth/register';
