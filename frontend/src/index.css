@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  html { font-family: 'Inter', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+  body { @apply bg-surface text-brand; min-height: 100vh; }
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-thumb { @apply bg-accent rounded-full; }
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+}
+
+@layer components {
+  /* ─── App Shell ─────────────────────────────────────────────── */
+  .app-shell {
+    @apply max-w-md mx-auto min-h-screen bg-surface flex flex-col;
+    box-shadow: 0 0 60px rgba(30,27,75,0.06);
+  }
+  .page-content { @apply flex-1 overflow-y-auto pb-20; }
+
+  /* ─── Cards ─────────────────────────────────────────────────── */
+  .card { @apply bg-card rounded-2xl border border-accent shadow-card; }
+  .list-item { @apply flex items-center gap-3 px-4 py-3.5 border-b border-accent/60 last:border-0; }
+
+  /* ─── TopBar ─────────────────────────────────────────────────── */
+  .top-bar { @apply flex items-center gap-3 px-4 py-3 bg-card border-b border-accent sticky top-0 z-20; }
+  .top-bar-title { @apply text-base font-semibold text-brand flex-1 truncate; }
+
+  /* ─── Bottom Nav ─────────────────────────────────────────────── */
+  .bottom-nav {
+    @apply fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-card border-t border-accent flex z-20;
+  }
+  .nav-item { @apply flex-1 flex flex-col items-center justify-center py-2.5 gap-0.5 transition-colors; }
+  .nav-item.active { @apply text-primary; }
+  .nav-item.inactive { @apply text-brand-muted; }
+  .nav-label { @apply text-[10px] font-medium; }
+
+  /* ─── Balance Banner ─────────────────────────────────────────── */
+  .balance-banner { @apply bg-primary px-5 py-5; }
+  .balance-label { @apply text-brand-sub text-xs font-semibold uppercase tracking-wider mb-1; }
+  .balance-amount { @apply text-brand text-3xl font-bold tabular-nums; }
+
+  /* ─── Inputs ─────────────────────────────────────────────────── */
+  .field-label { @apply block text-sm font-medium text-brand mb-1.5; }
+  .field-input {
+    @apply w-full px-4 py-3 rounded-xl border border-accent text-sm text-brand placeholder-brand-muted
+           bg-card focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all;
+  }
+  .field-input.error { @apply border-danger ring-1 ring-danger; }
+  .char-counter { @apply text-xs text-brand-muted text-right mt-1; }
+
+  /* ─── Buttons ─────────────────────────────────────────────────── */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl font-semibold text-sm
+           transition-all active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-primary   { @apply btn bg-primary text-brand hover:bg-primary-hover px-5 py-3; }
+  .btn-secondary { @apply btn bg-accent text-brand-sub hover:bg-secondary/70 border border-accent px-5 py-3; }
+  .btn-success   { @apply btn bg-success text-white hover:bg-green-600 px-5 py-3; }
+  .btn-danger    { @apply btn bg-danger text-white hover:bg-red-600 px-5 py-3; }
+  .btn-ghost     { @apply btn text-brand-sub hover:bg-surface px-3 py-2; }
+  .btn-outline-danger { @apply btn border-2 border-danger text-danger hover:bg-danger/5 px-4 py-2.5; }
+  .btn-full      { @apply w-full justify-center; }
+  .btn-sm        { @apply px-3 py-2 text-xs; }
+
+  /* ─── Badges ─────────────────────────────────────────────────── */
+  .badge { @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold; }
+  .badge-admin      { @apply badge bg-primary text-brand; }
+  .badge-member     { @apply badge bg-accent text-brand-sub; }
+  .badge-pending    { @apply badge bg-warning/15 text-warning; }
+  .badge-approved   { @apply badge bg-success/15 text-success; }
+  .badge-rejected   { @apply badge bg-danger/15 text-danger; }
+  .badge-transferred{ @apply badge bg-primary/30 text-brand; }
+  .badge-received   { @apply badge bg-secondary/40 text-brand-sub; }
+  .badge-completed  { @apply badge bg-success/20 text-success; }
+
+  /* ─── Tabs ─────────────────────────────────────────────────────── */
+  .tab-bar { @apply flex border-b border-accent; }
+  .tab-item { @apply flex-1 py-3 text-sm font-medium text-center transition-colors border-b-2 -mb-px; }
+  .tab-item.active { @apply text-brand border-primary; }
+  .tab-item.inactive { @apply text-brand-muted border-transparent hover:text-brand-sub; }
+
+  /* ─── Section labels ─────────────────────────────────────────── */
+  .section-label { @apply px-4 py-2 bg-surface border-b border-accent/50 text-xs font-semibold text-brand-muted uppercase tracking-wider; }
+
+  /* ─── Empty state ─────────────────────────────────────────────── */
+  .empty-state { @apply flex flex-col items-center justify-center gap-3 py-16 px-6 text-center; }
+
+  /* ─── Spinner ─────────────────────────────────────────────────── */
+  .spinner { @apply w-5 h-5 border-2 border-accent border-t-primary rounded-full animate-spin; }
+
+  /* ─── Amount text ─────────────────────────────────────────────── */
+  .amount-credit { @apply text-success font-bold tabular-nums; }
+  .amount-debit  { @apply text-danger font-bold tabular-nums; }
+
+  /* ─── Unread notification ─────────────────────────────────────── */
+  .notif-unread { @apply border-l-[3px] border-primary bg-primary/5; }
+
+  /* ─── File chip ─────────────────────────────────────────────────── */
+  .file-chip { @apply flex items-center gap-2 px-3 py-1.5 bg-accent rounded-lg text-xs text-brand-sub; }
+}
+
+@layer utilities {
+  .tabular-nums { font-variant-numeric: tabular-nums; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
