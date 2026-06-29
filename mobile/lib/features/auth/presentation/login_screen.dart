@@ -46,11 +46,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-  void _quickLogin(String email) {
-    _emailCtrl.text = email;
-    _passwordCtrl.text = 'demo1234';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,41 +104,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Demo accounts
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.primary.withOpacity(0.3)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Quick Login (Demo)', style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.primaryHover, letterSpacing: 0.8)),
-                    const SizedBox(height: 10),
-                    for (final demo in [
-                      ('Santosh Kumar', 'Admin', 'admin@demo.com'),
-                      ('Priya Sharma', 'Member / Admin', 'member@demo.com'),
-                      ('Ravi Verma', 'Member', 'ravi@demo.com'),
-                    ])
-                      InkWell(
-                        onTap: () => _quickLogin(demo.$3),
-                        borderRadius: BorderRadius.circular(8),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 6),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(demo.$1, style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.textPrimary)),
-                              Text(demo.$2, style: GoogleFonts.inter(fontSize: 11, color: AppColors.textMuted)),
-                            ],
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
+
               const SizedBox(height: 24),
               GestureDetector(
                 onTap: () => context.push('/register'),

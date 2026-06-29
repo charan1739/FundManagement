@@ -28,7 +28,6 @@ const LoginPage = () => {
     }
   };
 
-  const quickLogin = (email) => setForm({ email, password: 'demo1234' });
 
   return (
     <div className="min-h-screen bg-surface flex flex-col justify-center px-6 py-12 sm:px-12">
@@ -64,24 +63,6 @@ const LoginPage = () => {
             <Button type="submit" full loading={loading} className="mt-2">Sign In</Button>
           </form>
         </Card>
-
-        {/* Demo accounts */}
-        <div className="bg-primary/10 border border-primary/20 rounded-xl p-4">
-          <p className="text-xs font-semibold text-primary-hover mb-3 uppercase tracking-wider">Quick Login (Demo)</p>
-          <div className="flex flex-col gap-1.5">
-            {[
-              { label: 'Santosh Kumar', role: 'Admin', email: 'admin@demo.com' },
-              { label: 'Priya Sharma', role: 'Member / Admin', email: 'member@demo.com' },
-              { label: 'Ravi Verma', role: 'Member', email: 'ravi@demo.com' },
-            ].map(({ label, role, email }) => (
-              <button key={email} onClick={() => quickLogin(email)}
-                className="text-left flex items-center justify-between text-xs text-brand hover:bg-surface px-3 py-2 rounded-lg transition-colors border border-transparent hover:border-accent">
-                <span className="font-medium">{label}</span>
-                <span className="text-brand-muted">{role}</span>
-              </button>
-            ))}
-          </div>
-        </div>
 
         <p className="text-center text-sm text-brand-sub">
           New user?{' '}
