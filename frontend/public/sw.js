@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fund-manager-v1';
+const CACHE_NAME = 'fund-manager-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -25,15 +25,14 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch: network-first for API, cache-first for assets
+// Fetch strategies
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET and cross-origin requests
   if (request.method !== 'GET' || url.origin !== self.location.origin) return;
 
-  // API requests: network-first, no caching
+  // 1. API requests: Network-only with offline fallback
   if (url.pathname.startsWith('/api')) {
     event.respondWith(
       fetch(request).catch(() =>
@@ -46,7 +45,21 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static assets: cache-first
+  // 2. Navigation / HTML: Network-First
+  if (request.mode === 'navigate' || request.destination === 'document' || url.pathname === '/') {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          return response;
+        })
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
+
+  // 3. Static assets (JS, CSS, Images): Cache-First
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;
@@ -59,3 +72,4 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
