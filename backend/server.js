@@ -26,14 +26,24 @@ initSocket(httpServer);
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(mongoSanitize());
 
-// Support multiple allowed origins via comma-separated CLIENT_URL
-const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')
-  .split(',').map((o) => o.trim());
+// Support multiple allowed origins
+const envOrigins = (process.env.CLIENT_URL || '').split(',').map(o => o.trim()).filter(Boolean);
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'https://fund-management-blond.vercel.app',
+  ...envOrigins
+];
+
 app.use(cors({
   origin: (origin, cb) => {
     // Allow requests with no origin (mobile apps, curl, etc.)
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-    cb(new Error(`CORS: origin ${origin} not allowed`));
+    if (!origin || allowedOrigins.includes(origin)) {
+      return cb(null, true);
+    }
+    // Instead of throwing an error which crashes the request, 
+    // just return false to let the browser block it via CORS smoothly.
+    cb(null, false); 
   },
   credentials: true,
 }));
