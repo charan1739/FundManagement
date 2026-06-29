@@ -1,7 +1,13 @@
 import axios from 'axios';
 
+// In production (Vercel), there is no Vite proxy — use VITE_API_URL directly.
+// In local dev, fall back to '/api' which the Vite proxy forwards to the backend.
+const BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: BASE,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
 });
@@ -32,7 +38,7 @@ api.interceptors.response.use(
       if (!rf) { drain(err); isRefreshing = false; window.location.href = '/login'; return Promise.reject(err); }
 
       try {
-        const { data } = await axios.post('/api/auth/refresh-token', { refreshToken: rf });
+        const { data } = await axios.post(`${BASE}/auth/refresh-token`, { refreshToken: rf });
         const newToken = data.data.accessToken;
         localStorage.setItem('accessToken', newToken);
         if (data.data.refreshToken) localStorage.setItem('refreshToken', data.data.refreshToken);
