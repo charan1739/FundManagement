@@ -12,6 +12,10 @@ const { initSocket } = require('./utils/socketService');
 const app = express();
 const httpServer = http.createServer(app);
 
+// Trust the first proxy (Render, Heroku, etc. sit behind a load balancer)
+// Required for express-rate-limit to correctly identify client IPs
+app.set('trust proxy', 1);
+
 // Connect DB
 connectDB();
 
