@@ -19,7 +19,8 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (!user) return;
 
-    const socketUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const RENDER_URL = 'https://fundmanagement-xlr5.onrender.com';
+    const socketUrl = import.meta.env.PROD ? (import.meta.env.VITE_API_URL || RENDER_URL) : 'http://localhost:5000';
     const socket = io(socketUrl, {
       query: { userId: user._id },
       transports: ['websocket'],

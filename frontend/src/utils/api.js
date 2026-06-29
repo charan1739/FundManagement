@@ -1,9 +1,10 @@
 import axios from 'axios';
 
-// In production (Vercel), there is no Vite proxy — use VITE_API_URL directly.
-// In local dev, fall back to '/api' which the Vite proxy forwards to the backend.
-const BASE = import.meta.env.VITE_API_URL
-  ? `${import.meta.env.VITE_API_URL}/api`
+// In production (Vercel), hit the Render backend directly.
+// In local dev, use '/api' to go through the Vite proxy.
+const RENDER_URL = 'https://fundmanagement-xlr5.onrender.com';
+const BASE = import.meta.env.PROD
+  ? `${import.meta.env.VITE_API_URL || RENDER_URL}/api`
   : '/api';
 
 const api = axios.create({

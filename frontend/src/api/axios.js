@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-const BASE = import.meta.env.VITE_API_URL
-  ? `${import.meta.env.VITE_API_URL}/api`
+const RENDER_URL = 'https://fundmanagement-xlr5.onrender.com';
+const BASE = import.meta.env.PROD
+  ? `${import.meta.env.VITE_API_URL || RENDER_URL}/api`
   : '/api';
 
 const api = axios.create({
