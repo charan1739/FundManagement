@@ -8,6 +8,7 @@ import '../data/auth_repository.dart';
 import '../../groups/presentation/group_provider.dart';
 import '../../requests/presentation/request_provider.dart';
 import '../../funds/presentation/fund_provider.dart';
+import '../../../core/notifications/push_service.dart';
 
 final authRepoProvider = Provider<AuthRepository>((ref) => AuthRepository());
 
@@ -40,6 +41,10 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
       );
       await SecureStorage.instance.saveUser(jsonEncode(user.toJson()));
       SocketService.instance.connect(data['accessToken'] as String, user.id);
+      
+      // Register FCM token now that we are authenticated
+      PushService.instance.registerToken();
+      
       state = AsyncData(user);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
@@ -62,6 +67,10 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
       );
       await SecureStorage.instance.saveUser(jsonEncode(user.toJson()));
       SocketService.instance.connect(data['accessToken'] as String, user.id);
+      
+      // Register FCM token now that we are authenticated
+      PushService.instance.registerToken();
+      
       state = AsyncData(user);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);

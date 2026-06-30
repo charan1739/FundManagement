@@ -44,4 +44,16 @@ const deleteAccount = asyncHandler(async (req, res) => {
   res.json({ success: true, message: 'Account deleted' });
 });
 
-module.exports = { getProfile, updateProfile, changePassword, deleteAccount };
+// PATCH /api/profile/fcm-token
+const updateFcmToken = asyncHandler(async (req, res) => {
+  const { token } = req.body;
+  if (!token) return res.status(400).json({ success: false, message: 'Token is required' });
+
+  await User.findByIdAndUpdate(req.user._id, {
+    $addToSet: { fcmTokens: token }
+  });
+  
+  res.json({ success: true, message: 'FCM token registered' });
+});
+
+module.exports = { getProfile, updateProfile, changePassword, deleteAccount, updateFcmToken };

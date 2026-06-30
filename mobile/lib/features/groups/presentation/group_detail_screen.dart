@@ -36,7 +36,6 @@ class GroupDetailScreen extends ConsumerStatefulWidget {
 
 class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> with SingleTickerProviderStateMixin {
   late TabController _tabCtrl;
-  bool _showRefreshBanner = false;
 
   @override
   void initState() {
@@ -50,7 +49,10 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> with Sing
     SocketService.instance.events.listen((evt) {
       if (!mounted) return;
       if (evt.event == SocketEvent.groupActivity && evt.data['groupId'] == widget.groupId) {
-        setState(() => _showRefreshBanner = true);
+        // Automatically invalidate providers to trigger dynamic refresh
+        ref.invalidate(transactionProvider(widget.groupId));
+        ref.invalidate(activityProvider(widget.groupId));
+        ref.invalidate(membersProvider(widget.groupId));
       }
       if (evt.event == SocketEvent.balanceUpdated && evt.data['groupId'] == widget.groupId) {
         ref.invalidate(groupDetailProvider(widget.groupId));
@@ -63,14 +65,6 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> with Sing
     SocketService.instance.leaveGroup(widget.groupId);
     _tabCtrl.dispose();
     super.dispose();
-  }
-
-  void _handleRefresh() {
-    setState(() => _showRefreshBanner = false);
-    ref.invalidate(groupDetailProvider(widget.groupId));
-    ref.invalidate(transactionProvider(widget.groupId));
-    ref.invalidate(activityProvider(widget.groupId));
-    ref.invalidate(membersProvider(widget.groupId));
   }
 
   @override
@@ -156,21 +150,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> with Sing
                 ]),
               ]),
             ),
-            // Refresh Banner
-            if (_showRefreshBanner)
-              GestureDetector(
-                onTap: _handleRefresh,
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  color: AppColors.accent,
-                  child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    const Icon(LucideIcons.refreshCw, size: 14, color: AppColors.textSecondary),
-                    const SizedBox(width: 8),
-                    Text(AppStrings.newActivityBanner, style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.textSecondary)),
-                  ]),
-                ),
-              ),
+            // Dynamic updates happen automatically now
             // Action Buttons
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

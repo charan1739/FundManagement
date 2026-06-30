@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true, minlength: 6, select: false },
   phone: { type: String, trim: true },
   refreshToken: { type: String, select: false },
+  fcmTokens: [{ type: String }],
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {

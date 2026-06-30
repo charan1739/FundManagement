@@ -17,7 +17,7 @@ function checkLocalBackend(host, port, timeoutMs = 800) {
 
 export default defineConfig(async ({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const localBackend = env.VITE_BACKEND_URL || 'http://localhost:5000';
+  const localBackend = env.VITE_BACKEND_URL || 'http://127.0.0.1:5000';
 
   const localUrl = new URL(localBackend);
   const localAvailable = await checkLocalBackend(

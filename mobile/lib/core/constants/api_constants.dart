@@ -5,7 +5,7 @@ class ApiConstants {
   // Falls back to the deployed Render backend if not provided.
   static const String _base = String.fromEnvironment(
     'BASE_URL',
-    defaultValue: 'https://fundmanagement-xlr5.onrender.com',
+    defaultValue: 'http://10.0.2.2:5000',
   );
 
   static const String baseUrl = '$_base/api';

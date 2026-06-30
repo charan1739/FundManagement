@@ -10,8 +10,20 @@ import 'features/auth/presentation/auth_provider.dart';
 import 'features/notifications/presentation/notification_provider.dart';
 import 'features/notifications/models/notification_model.dart';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'core/notifications/push_service.dart';
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+}
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
@@ -31,6 +43,8 @@ class _FundManagerAppState extends ConsumerState<FundManagerApp> {
   void initState() {
     super.initState();
     _setupSocketListeners();
+    // Initialize push notifications
+    PushService.instance.init();
   }
 
   void _setupSocketListeners() {

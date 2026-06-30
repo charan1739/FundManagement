@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "603097111154",
+    "project_id": "fund-management-20ad5",
+    "storage_bucket": "fund-management-20ad5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:603097111154:android:bea5542fc573a545dd00eb",
+        "android_client_info": {
+          "package_name": "com.fundmanager.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB97rBjFMCoMZOjP4QZg5smU8dDojz5U4Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

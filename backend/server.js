@@ -8,6 +8,7 @@ const rateLimit = require('express-rate-limit');
 const path = require('path');
 const connectDB = require('./config/db');
 const { initSocket } = require('./utils/socketService');
+const { initFirebaseAdmin } = require('./utils/firebaseAdmin');
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -21,6 +22,9 @@ connectDB();
 
 // Init Socket.io
 initSocket(httpServer);
+
+// Init Firebase Admin
+initFirebaseAdmin();
 
 // Security
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
