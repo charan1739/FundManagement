@@ -12,7 +12,10 @@ import 'features/notifications/models/notification_model.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'core/notifications/push_service.dart';
+import 'core/constants/api_constants.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -21,7 +24,15 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await ApiConstants.initEnvironment();
   await Firebase.initializeApp();
+  
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -55,6 +66,20 @@ class _FundManagerAppState extends ConsumerState<FundManagerApp> {
         try {
           final notif = NotificationModel.fromJson(evt.data);
           ref.read(notificationProvider.notifier).prependNotification(notif);
+          
+          // Show foreground in-app notification
+          final ctx = rootNavigatorKey.currentContext;
+          if (ctx != null) {
+            ScaffoldMessenger.of(ctx).showSnackBar(
+              SnackBar(
+                content: Text(notif.title ?? 'New Notification'),
+                behavior: SnackBarBehavior.floating,
+                margin: const EdgeInsets.all(16),
+                backgroundColor: AppColors.primary,
+                duration: const Duration(seconds: 4),
+              )
+            );
+          }
         } catch (_) {
           // If not parseable, just refresh
           ref.read(notificationProvider.notifier).refresh();

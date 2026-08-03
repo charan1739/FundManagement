@@ -24,6 +24,7 @@ const RequestDetailPage = () => {
   const { groupActivity } = useSocket();
   const [request, setRequest] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   
   const [showReject, setShowReject] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
@@ -37,6 +38,14 @@ const RequestDetailPage = () => {
     try {
       const { data } = await api.get(`/requests/${id}`);
       setRequest(data.data);
+      
+      // Fetch group to determine role
+      const groupId = data.data.group?._id || data.data.group;
+      if (groupId) {
+        import('../../api/index').then(({ getGroup }) => {
+          getGroup(groupId).then((res) => setIsAdmin(res.data.data.myRole === 'admin')).catch(() => {});
+        });
+      }
     } catch (err) {
       toast.error('Failed to load request');
       navigate(-1);
@@ -77,7 +86,6 @@ const RequestDetailPage = () => {
 
   if (loading || !request) return <AppShell hideNav><TopBar title="Loading..." /></AppShell>;
 
-  const isAdmin = true; // Simplified: in a real app, check req.user._id against group admins array. For V1 we assume the admin sees manage requests page.
   const isRequester = request.requestedBy._id === user._id;
 
   return (

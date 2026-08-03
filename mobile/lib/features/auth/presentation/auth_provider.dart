@@ -45,6 +45,7 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
       // Register FCM token now that we are authenticated
       PushService.instance.registerToken();
       
+      _clearProviders();
       state = AsyncData(user);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
@@ -71,6 +72,7 @@ class AuthNotifier extends AsyncNotifier<UserModel?> {
       // Register FCM token now that we are authenticated
       PushService.instance.registerToken();
       
+      _clearProviders();
       state = AsyncData(user);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);

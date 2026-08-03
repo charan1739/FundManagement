@@ -142,7 +142,7 @@ class _RequestDetailScreenState extends ConsumerState<RequestDetailScreen> {
         final isGroupAdmin = groupId != null
             ? (ref.watch(groupDetailProvider(groupId)).valueOrNull?.isAdmin ?? false)
             : false;
-        final canActAsAdmin = isGroupAdmin && !isRequester;
+        final canActAsAdmin = isGroupAdmin;
         return Scaffold(
           backgroundColor: AppColors.surface,
           appBar: AppBar(

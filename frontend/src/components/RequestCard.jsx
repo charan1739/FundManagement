@@ -9,7 +9,7 @@ const WORKFLOW_STEPS = ['pending', 'approved', 'transferred', 'completed'];
 const RequestCard = ({ request, onApprove, onReject, onTransfer, onConfirm, userRole, userId }) => {
   const stepIdx = WORKFLOW_STEPS.indexOf(request.status === 'received' ? 'completed' : request.status);
   const isRequester = request.requestedBy?._id === userId;
-  const canManage = ['owner', 'finance_manager'].includes(userRole);
+  const canManage = userRole === 'admin';
 
   return (
     <motion.div

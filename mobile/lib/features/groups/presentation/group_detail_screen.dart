@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/utils/format_inr.dart';
@@ -262,6 +263,24 @@ class _TransactionTile extends StatelessWidget {
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(txn.remarks ?? (isCredit ? 'Funds Added' : 'Transfer Completed'), style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.textPrimary)),
           Text('${txn.addedBy.name} · ${formatIST(txn.createdAt)}', style: GoogleFonts.inter(fontSize: 12, color: AppColors.textMuted)),
+          if (txn.proofUrl != null && txn.proofUrl!.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            GestureDetector(
+              onTap: () async {
+                final uri = Uri.parse(txn.proofUrl!);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
+              child: Row(
+                children: [
+                  const Icon(LucideIcons.paperclip, size: 14, color: AppColors.primary),
+                  const SizedBox(width: 4),
+                  Text('View Receipt', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.primary)),
+                ],
+              ),
+            ),
+          ],
         ])),
         Text(
           '${isCredit ? '+' : '-'}${formatINR(txn.amount)}',

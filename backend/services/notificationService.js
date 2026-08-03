@@ -1,5 +1,7 @@
 const Notification = require('../models/Notification');
+const User = require('../models/User');
 const { NOTIFICATION_TYPES } = require('../config/constants');
+const { getAdmin } = require('../utils/firebaseAdmin');
 
 /**
  * Create a notification for one or more recipients.
@@ -14,7 +16,41 @@ const createNotification = async ({ recipients, type, title, message, relatedPro
     relatedProject: relatedProject || null,
     relatedRequest: relatedRequest || null,
   }));
-  return await Notification.insertMany(docs);
+  const notifications = await Notification.insertMany(docs);
+
+  // Send Push Notifications via FCM
+  try {
+    const admin = getAdmin();
+    if (admin) {
+      // Find all recipients to get their FCM tokens
+      const users = await User.find({ _id: { $in: recipients } }).select('fcmTokens');
+      let tokens = [];
+      users.forEach(u => {
+        if (u.fcmTokens && u.fcmTokens.length > 0) {
+          tokens.push(...u.fcmTokens);
+        }
+      });
+
+      if (tokens.length > 0) {
+        // Send multicast message
+        const payload = {
+          notification: { title, body: message },
+          data: {
+            type: String(type),
+            relatedProject: String(relatedProject || ''),
+            relatedRequest: String(relatedRequest || '')
+          },
+          tokens: tokens
+        };
+        const response = await admin.messaging().sendEachForMulticast(payload);
+        console.log(`[FCM] Sent notifications: ${response.successCount} successful, ${response.failureCount} failed.`);
+      }
+    }
+  } catch (error) {
+    console.error('[FCM] Error sending push notification:', error);
+  }
+
+  return notifications;
 };
 
 const notifyNewRequest = async ({ financeManagers, projectId, requestId, requesterName, amount, projectName }) => {

@@ -76,6 +76,10 @@ const getUserRequests = asyncHandler(async (req, res) => {
 const approveRequest = asyncHandler(async (req, res) => {
   const request = await FundRequest.findById(req.params.id).populate('group');
   if (!request) return res.status(404).json({ success: false, message: 'Request not found' });
+  
+  const isAdmin = await GroupMember.findOne({ group: request.group._id, user: req.user._id, role: 'admin', status: 'active' });
+  if (!isAdmin) return res.status(403).json({ success: false, message: 'Only group admin can manage requests' });
+  
   if (request.status !== 'pending') return res.status(400).json({ success: false, message: `Cannot approve a ${request.status} request` });
 
   request.status = 'approved';
@@ -99,6 +103,10 @@ const rejectRequest = asyncHandler(async (req, res) => {
 
   const request = await FundRequest.findById(req.params.id).populate('group');
   if (!request) return res.status(404).json({ success: false, message: 'Request not found' });
+  
+  const isAdmin = await GroupMember.findOne({ group: request.group._id, user: req.user._id, role: 'admin', status: 'active' });
+  if (!isAdmin) return res.status(403).json({ success: false, message: 'Only group admin can manage requests' });
+
   if (!['pending', 'approved'].includes(request.status)) return res.status(400).json({ success: false, message: `Cannot reject a ${request.status} request` });
 
   request.status = 'rejected';
@@ -120,6 +128,10 @@ const rejectRequest = asyncHandler(async (req, res) => {
 const markTransferred = asyncHandler(async (req, res) => {
   const request = await FundRequest.findById(req.params.id).populate('group requestedBy');
   if (!request) return res.status(404).json({ success: false, message: 'Request not found' });
+  
+  const isAdmin = await GroupMember.findOne({ group: request.group._id, user: req.user._id, role: 'admin', status: 'active' });
+  if (!isAdmin) return res.status(403).json({ success: false, message: 'Only group admin can manage requests' });
+
   if (request.status !== 'approved') return res.status(400).json({ success: false, message: 'Request must be approved first' });
 
   request.status = 'transferred';

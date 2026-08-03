@@ -20,10 +20,10 @@ export const getTransactions = (groupId, params) => api.get(`/groups/${groupId}/
 
 export const getRequests = (groupId, params) => api.get(`/groups/${groupId}/requests`, { params });
 export const createRequest = (groupId, data) => api.post(`/groups/${groupId}/requests`, data);
-export const approveRequest = (groupId, rId) => api.put(`/groups/${groupId}/requests/${rId}/approve`);
-export const rejectRequest = (groupId, rId, data) => api.put(`/groups/${groupId}/requests/${rId}/reject`, data);
-export const markTransferred = (groupId, rId) => api.put(`/groups/${groupId}/requests/${rId}/transfer`);
-export const confirmReceipt = (groupId, rId) => api.put(`/groups/${groupId}/requests/${rId}/confirm`);
+export const approveRequest = (groupId, rId) => api.patch(`/requests/${rId}/approve`);
+export const rejectRequest = (groupId, rId, data) => api.patch(`/requests/${rId}/reject`, data);
+export const markTransferred = (groupId, rId) => api.patch(`/requests/${rId}/transfer`);
+export const confirmReceipt = (groupId, rId) => api.patch(`/requests/${rId}/confirm`);
 
 export const getNotifications = (params) => api.get('/notifications', { params });
 export const markRead = (id) => api.put(`/notifications/${id}/read`);

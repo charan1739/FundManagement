@@ -93,8 +93,12 @@ class _MenuSection extends StatelessWidget {
   const _MenuSection({required this.items});
 
   @override
-  Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.border)),
+  Widget build(BuildContext context) => Material(
+    color: AppColors.card,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+      side: const BorderSide(color: AppColors.border),
+    ),
     child: Column(
       children: items.asMap().entries.map((entry) {
         final i = entry.key; final item = entry.value;

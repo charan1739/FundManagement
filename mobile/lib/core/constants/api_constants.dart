@@ -1,15 +1,35 @@
+import 'package:dio/dio.dart';
+
 class ApiConstants {
   ApiConstants._();
 
-  // Inject at build/run time via: flutter run --dart-define=BASE_URL=http://10.0.2.2:5000
-  // Falls back to the deployed Render backend if not provided.
-  static const String _base = String.fromEnvironment(
+  static const String _defaultLocal = 'http://10.0.2.2:5000';
+  static const String _renderFallback = 'https://fundmanagement-xlr5.onrender.com';
+
+  static String _base = const String.fromEnvironment(
     'BASE_URL',
-    defaultValue: 'http://10.0.2.2:5000',
+    defaultValue: _defaultLocal,
   );
 
-  static const String baseUrl = '$_base/api';
-  static const String socketUrl = _base;
+  static String baseUrl = '$_base/api';
+  static String socketUrl = _base;
+
+  static Future<void> initEnvironment() async {
+    if (const bool.hasEnvironment('BASE_URL')) return;
+
+    try {
+      final dio = Dio(BaseOptions(
+        connectTimeout: const Duration(seconds: 2),
+        receiveTimeout: const Duration(seconds: 2),
+      ));
+      await dio.get('$_defaultLocal/api/health');
+      _base = _defaultLocal;
+    } catch (_) {
+      _base = _renderFallback;
+    }
+    baseUrl = '$_base/api';
+    socketUrl = _base;
+  }
 
   // Auth
   static const String register = '/auth/register';

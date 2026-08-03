@@ -3,9 +3,11 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- File read for file picker -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!-- Push notifications -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
-        android:label="Fund Management"
+        android:label="Fund Manager"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
