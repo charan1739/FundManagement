@@ -48,8 +48,12 @@ const LoginPage = () => {
               required
             />
             <div className="relative">
+              <div className="flex justify-between items-center mb-1">
+                <label className="text-sm font-medium text-brand">Password</label>
+                <Link to="/forgot-password" className="text-xs font-semibold text-primary-hover hover:underline">Forgot?</Link>
+              </div>
               <Input
-                label="Password" type={showPw ? 'text' : 'password'} placeholder="••••••••"
+                type={showPw ? 'text' : 'password'} placeholder="••••••••"
                 value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
                 required
               />

@@ -97,6 +97,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         textInputAction: TextInputAction.done,
                         validator: (v) => v?.isEmpty == true ? 'Password is required' : null,
                       ),
+                      const SizedBox(height: 12),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: () => context.push('/forgot-password'),
+                          child: Text('Forgot Password?', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.primaryHover)),
+                        ),
+                      ),
                       const SizedBox(height: 24),
                       AppButton(label: AppStrings.signIn, onPressed: _submit, loading: _loading, fullWidth: true),
                     ],

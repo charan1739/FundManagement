@@ -13,6 +13,8 @@ const userSchema = new mongoose.Schema({
   phone: { type: String, trim: true },
   refreshToken: { type: String, select: false },
   fcmTokens: [{ type: String }],
+  resetPasswordToken: String,
+  resetPasswordExpire: Date,
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {
@@ -23,6 +25,19 @@ userSchema.pre('save', async function (next) {
 
 userSchema.methods.comparePassword = async function (plain) {
   return bcrypt.compare(plain, this.password);
+};
+
+userSchema.methods.getResetPasswordToken = function () {
+  // Generate token
+  const resetToken = require('crypto').randomBytes(20).toString('hex');
+
+  // Hash token and set to resetPasswordToken field
+  this.resetPasswordToken = require('crypto').createHash('sha256').update(resetToken).digest('hex');
+
+  // Set expire (10 minutes)
+  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
 };
 
 module.exports = mongoose.model('User', userSchema);

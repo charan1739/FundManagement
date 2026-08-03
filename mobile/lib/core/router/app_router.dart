@@ -6,6 +6,8 @@ import '../../core/storage/secure_storage.dart';
 import '../../core/theme/app_colors.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
+import '../../features/auth/presentation/forgot_password_screen.dart';
+import '../../features/auth/presentation/reset_password_screen.dart';
 import '../../features/auth/presentation/auth_provider.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/groups/presentation/group_detail_screen.dart';
@@ -45,7 +47,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) async {
       final token = await SecureStorage.instance.getAccessToken();
       final isAuth = token != null;
-      final onAuthPage = state.matchedLocation == '/login' || state.matchedLocation == '/register';
+      final onAuthPage = state.matchedLocation == '/login' || state.matchedLocation == '/register' || state.matchedLocation == '/forgot-password' || state.matchedLocation.startsWith('/reset-password');
       if (!isAuth && !onAuthPage) return '/login';
       if (isAuth && onAuthPage) return '/home';
       return null;
@@ -53,6 +55,8 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(path: '/login', builder: (ctx, _) => const LoginScreen()),
       GoRoute(path: '/register', builder: (ctx, _) => const RegisterScreen()),
+      GoRoute(path: '/forgot-password', builder: (ctx, _) => const ForgotPasswordScreen()),
+      GoRoute(path: '/reset-password/:token', builder: (ctx, state) => ResetPasswordScreen(token: state.pathParameters['token']!)),
       ShellRoute(
         navigatorKey: _shellKey,
         builder: (ctx, state, child) => _Shell(child: child),

@@ -36,6 +36,8 @@ class ApiConstants {
   static const String login = '/auth/login';
   static const String logout = '/auth/logout';
   static const String refreshToken = '/auth/refresh-token';
+  static const String forgotPassword = '/auth/forgot-password';
+  static String resetPassword(String token) => '/auth/reset-password/$token';
 
   // Groups
   static const String groups = '/groups';

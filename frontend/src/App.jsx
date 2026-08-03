@@ -8,6 +8,8 @@ import { SocketProvider } from './context/SocketContext';
 // Pages
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from './pages/auth/ResetPasswordPage';
 import HomePage from './pages/home/HomePage';
 import GroupPage from './pages/groups/GroupPage';
 import AddFundPage from './pages/groups/AddFundPage';
@@ -37,6 +39,8 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
           
           <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
           

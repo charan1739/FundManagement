@@ -4,6 +4,8 @@ export const register = (data) => api.post('/auth/register', data);
 export const login = (data) => api.post('/auth/login', data);
 export const logout = () => api.post('/auth/logout');
 export const refreshToken = (token) => api.post('/auth/refresh-token', { refreshToken: token });
+export const forgotPassword = (data) => api.post('/auth/forgot-password', data);
+export const resetPassword = (token, data) => api.put(`/auth/reset-password/${token}`, data);
 
 export const getMyGroups = () => api.get('/groups');
 export const createGroup = (data) => api.post('/groups', data);
