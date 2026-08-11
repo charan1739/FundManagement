@@ -5,6 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const rateLimit = require('express-rate-limit');
+const compression = require('compression');
 const path = require('path');
 const connectDB = require('./config/db');
 const { initSocket } = require('./utils/socketService');
@@ -29,6 +30,7 @@ initFirebaseAdmin();
 // Security
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(mongoSanitize());
+app.use(compression());
 
 // Support multiple allowed origins
 const envOrigins = (process.env.CLIENT_URL || '').split(',').map(o => o.trim()).filter(Boolean);

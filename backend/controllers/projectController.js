@@ -24,7 +24,8 @@ const getProjects = asyncHandler(async (req, res) => {
     .populate('owner', 'name email avatar')
     .sort({ createdAt: -1 })
     .skip((page - 1) * limit)
-    .limit(parseInt(limit));
+    .limit(parseInt(limit))
+    .lean();
 
   // Attach user's role to each project
   const membershipMap = {};
@@ -32,7 +33,7 @@ const getProjects = asyncHandler(async (req, res) => {
   fullMemberships.forEach((m) => { membershipMap[m.project.toString()] = m.role; });
 
   const projectsWithRole = projects.map((p) => ({
-    ...p.toObject(),
+    ...p,
     myRole: membershipMap[p._id.toString()],
   }));
 

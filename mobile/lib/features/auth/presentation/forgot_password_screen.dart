@@ -10,6 +10,7 @@ import '../../../core/constants/app_strings.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_input.dart';
 import '../../auth/data/auth_repository.dart';
+import '../../../core/network/dio_client.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -29,7 +30,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     setState(() => _loading = true);
     
     try {
-      final dio = ref.read(dioProvider);
+      final dio = DioClient.instance.dio;
       await dio.post(ApiConstants.forgotPassword, data: {'email': email});
       if (mounted) setState(() => _sent = true);
     } on DioException catch (e) {

@@ -6,11 +6,12 @@ const asyncHandler = require('../utils/asyncHandler');
 // GET /api/groups
 const getMyGroups = asyncHandler(async (req, res) => {
   const memberships = await GroupMember.find({ user: req.user._id, status: 'active' })
-    .populate({ path: 'group', populate: { path: 'createdBy', select: 'name username' } });
+    .populate({ path: 'group', populate: { path: 'createdBy', select: 'name username' } })
+    .lean();
 
   const groups = memberships
     .filter((m) => m.group && m.group.status === 'active')
-    .map((m) => ({ ...m.group.toObject(), myRole: m.role }));
+    .map((m) => ({ ...m.group, myRole: m.role }));
 
   res.json({ success: true, data: groups });
 });

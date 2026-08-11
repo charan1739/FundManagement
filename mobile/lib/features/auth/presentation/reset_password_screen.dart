@@ -10,6 +10,7 @@ import '../../../core/constants/app_strings.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_input.dart';
 import '../../auth/data/auth_repository.dart';
+import '../../../core/network/dio_client.dart';
 
 class ResetPasswordScreen extends ConsumerStatefulWidget {
   final String token;
@@ -32,7 +33,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
     setState(() => _loading = true);
     
     try {
-      final dio = ref.read(dioProvider);
+      final dio = DioClient.instance.dio;
       await dio.put(ApiConstants.resetPassword(widget.token), data: {'password': password});
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Password reset successfully'), backgroundColor: AppColors.success));

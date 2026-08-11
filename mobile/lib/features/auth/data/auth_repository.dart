@@ -3,6 +3,7 @@ import '../../../core/network/dio_client.dart';
 import '../../../core/network/api_error_handler.dart';
 import '../../../core/constants/api_constants.dart';
 import '../models/user_model.dart';
+import '../../../core/constants/app_strings.dart';
 
 class AuthRepository {
   final Dio _dio = DioClient.instance.dio;
@@ -15,7 +16,7 @@ class AuthRepository {
       );
       return res.data['data'] as Map<String, dynamic>;
     } on DioException catch (e) {
-      throw AppException.fromDioError(e, fallback: AppStrings._serverError);
+      throw AppException.fromDioError(e, fallback: AppStrings.serverError);
     }
   }
 
@@ -41,7 +42,3 @@ class AuthRepository {
   }
 }
 
-// ignore: library_private_types_in_public_api
-class AppStrings {
-  static const _serverError = 'Something went wrong. Please try again.';
-}

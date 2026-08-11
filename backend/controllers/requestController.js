@@ -48,7 +48,8 @@ const getRequests = asyncHandler(async (req, res) => {
     .populate('approvedBy', 'name')
     .populate('rejectedBy', 'name')
     .populate('transferredBy', 'name')
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: -1 })
+    .lean();
   res.json({ success: true, data: requests });
 });
 
@@ -68,7 +69,8 @@ const getRequestById = asyncHandler(async (req, res) => {
 const getUserRequests = asyncHandler(async (req, res) => {
   const requests = await FundRequest.find({ requestedBy: req.user._id })
     .populate('group', 'name groupCode')
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: -1 })
+    .lean();
   res.json({ success: true, data: requests });
 });
 
