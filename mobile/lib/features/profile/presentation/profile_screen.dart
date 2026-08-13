@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_flutter/lucide_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/utils/avatar_color.dart';
@@ -33,19 +34,8 @@ class ProfileScreen extends ConsumerWidget {
     }
 
     Future<void> handleDelete() async {
-      final confirmCtrl = TextEditingController();
-      final ok = await showConfirmDialog(context,
-        title: AppStrings.deleteAccount,
-        message: 'This is permanent and cannot be undone. All your data will be erased.',
-        confirmLabel: 'Delete Account',
-        confirmVariant: AppButtonVariant.danger,
-        extraContent: AppInput(label: AppStrings.typeDeleteConfirm, hintText: 'DELETE', controller: confirmCtrl),
-      );
-      if (ok == true && confirmCtrl.text == 'DELETE') {
-        await ref.read(profileProvider.notifier).deleteAccount();
-        await ref.read(authProvider.notifier).logout();
-        if (context.mounted) context.go('/login');
-      }
+      final url = Uri.parse('https://upgradeschool.in/fund-manager/delete-account');
+      await launchUrl(url, mode: LaunchMode.externalApplication);
     }
 
     return Scaffold(
@@ -70,6 +60,11 @@ class ProfileScreen extends ConsumerWidget {
           _MenuSection(items: [
             _MenuItem(icon: LucideIcons.fileText, label: AppStrings.myRequests, subtitle: 'View all your fund requests', onTap: () => context.push('/profile/requests')),
             _MenuItem(icon: LucideIcons.lock, label: AppStrings.changePassword, subtitle: 'Update your security credentials', onTap: () => context.push('/profile/password')),
+          ]),
+          const SizedBox(height: 16),
+          _MenuSection(items: [
+            _MenuItem(icon: LucideIcons.shield, label: 'Privacy Policy', onTap: () => launchUrl(Uri.parse('https://upgradeschool.in/fund-manager/privacy-policy'), mode: LaunchMode.externalApplication)),
+            _MenuItem(icon: LucideIcons.fileText, label: 'Terms & Conditions', onTap: () => launchUrl(Uri.parse('https://upgradeschool.in/fund-manager/terms'), mode: LaunchMode.externalApplication)),
           ]),
           const SizedBox(height: 16),
           _MenuSection(items: [
