@@ -1,43 +1,61 @@
-const Brevo = require('@getbrevo/brevo');
-
-let brevoClient = null;
-
-const getBrevoClient = () => {
-  if (!brevoClient) {
-    const client = new Brevo.TransactionalEmailsApi();
-    client.authentications['api-key'].apiKey = process.env.BREVO_API_KEY;
-    brevoClient = client;
-  }
-  return brevoClient;
-};
+const https = require('https');
 
 /**
- * Send an email via Brevo. If MAIL_ENABLED is not 'true', logs the email instead.
+ * Send an email via Brevo REST API (no SDK).
  * Free plan: 300 emails/day, no domain verification required.
  */
-const sendEmail = async ({ to, subject, html, text }) => {
+const sendEmail = ({ to, subject, html, text }) => {
   if (process.env.MAIL_ENABLED !== 'true') {
     console.log(`[Email Skipped — MAIL_ENABLED=false] To: ${to} | Subject: ${subject}`);
-    return { skipped: true };
+    return Promise.resolve({ skipped: true });
   }
 
-  const client = getBrevoClient();
+  return new Promise((resolve, reject) => {
+    const payload = JSON.stringify({
+      sender: {
+        name: process.env.MAIL_SENDER_NAME || 'Fund Manager',
+        email: process.env.MAIL_USER || 'upgradeschoolsupport@gmail.com',
+      },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html || `<p>${text || subject}</p>`,
+    });
 
-  const sendSmtpEmail = new Brevo.SendSmtpEmail();
-  sendSmtpEmail.subject = subject;
-  sendSmtpEmail.htmlContent = html || `<p>${text || subject}</p>`;
-  sendSmtpEmail.sender = {
-    name: process.env.MAIL_SENDER_NAME || 'Fund Manager',
-    email: process.env.MAIL_USER || 'upgradeschoolsupport@gmail.com',
-  };
-  sendSmtpEmail.to = [{ email: to }];
-  sendSmtpEmail.replyTo = {
-    email: process.env.MAIL_USER || 'upgradeschoolsupport@gmail.com',
-  };
+    const options = {
+      hostname: 'api.brevo.com',
+      path: '/v3/smtp/email',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': process.env.BREVO_API_KEY,
+        'Content-Length': Buffer.byteLength(payload),
+      },
+    };
 
-  const result = await client.sendTransacEmail(sendSmtpEmail);
-  console.log(`[Email Sent via Brevo] To: ${to} | MessageId: ${result.body?.messageId}`);
-  return result;
+    const req = https.request(options, (res) => {
+      let body = '';
+      res.on('data', (chunk) => { body += chunk; });
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          const data = JSON.parse(body);
+          console.log(`[Email Sent via Brevo] To: ${to} | MessageId: ${data.messageId}`);
+          resolve(data);
+        } else {
+          const err = new Error(`Brevo API error ${res.statusCode}: ${body}`);
+          console.error(`[Brevo Error] ${err.message}`);
+          reject(err);
+        }
+      });
+    });
+
+    req.on('error', (err) => {
+      console.error(`[Brevo Request Error]`, err.message);
+      reject(err);
+    });
+
+    req.write(payload);
+    req.end();
+  });
 };
 
 // --- Email Templates ---
