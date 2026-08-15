@@ -31,19 +31,23 @@ class NotificationNotifier extends AsyncNotifier<List<NotificationModel>> {
   }
 
   Future<void> markRead(String id) async {
-    final repo = ref.read(notificationRepoProvider);
-    await repo.markRead(id);
+    // Optimistically update UI immediately on tap
     state = AsyncData(
       state.valueOrNull?.map((n) => n.id == id ? n.copyWith(read: true) : n).toList() ?? [],
     );
+    // Fire-and-forget API call in the background
+    final repo = ref.read(notificationRepoProvider);
+    await repo.markRead(id);
   }
 
   Future<void> markAllRead() async {
-    final repo = ref.read(notificationRepoProvider);
-    await repo.markAllRead();
+    // Optimistically update all to read immediately
     state = AsyncData(
       state.valueOrNull?.map((n) => n.copyWith(read: true)).toList() ?? [],
     );
+    // Fire-and-forget API call in the background
+    final repo = ref.read(notificationRepoProvider);
+    await repo.markAllRead();
   }
 
   void prependNotification(NotificationModel notif) {
