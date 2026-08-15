@@ -1,16 +1,19 @@
-const { Resend } = require('resend');
+const Brevo = require('@getbrevo/brevo');
 
-let resendClient = null;
+let brevoClient = null;
 
-const getResendClient = () => {
-  if (!resendClient) {
-    resendClient = new Resend(process.env.RESEND_API_KEY);
+const getBrevoClient = () => {
+  if (!brevoClient) {
+    const client = new Brevo.TransactionalEmailsApi();
+    client.authentications['api-key'].apiKey = process.env.BREVO_API_KEY;
+    brevoClient = client;
   }
-  return resendClient;
+  return brevoClient;
 };
 
 /**
- * Send an email via Resend. If MAIL_ENABLED is not 'true', logs the email instead.
+ * Send an email via Brevo. If MAIL_ENABLED is not 'true', logs the email instead.
+ * Free plan: 300 emails/day, no domain verification required.
  */
 const sendEmail = async ({ to, subject, html, text }) => {
   if (process.env.MAIL_ENABLED !== 'true') {
@@ -18,22 +21,23 @@ const sendEmail = async ({ to, subject, html, text }) => {
     return { skipped: true };
   }
 
-  const client = getResendClient();
-  const { data, error } = await client.emails.send({
-    from: process.env.MAIL_FROM || 'Fund Manager <onboarding@resend.dev>',
-    to,
-    subject,
-    text: text || subject,
-    html,
-  });
+  const client = getBrevoClient();
 
-  if (error) {
-    console.error(`[Email Error] To: ${to} | Error: ${JSON.stringify(error)}`);
-    throw new Error(error.message || 'Failed to send email via Resend');
-  }
+  const sendSmtpEmail = new Brevo.SendSmtpEmail();
+  sendSmtpEmail.subject = subject;
+  sendSmtpEmail.htmlContent = html || `<p>${text || subject}</p>`;
+  sendSmtpEmail.sender = {
+    name: process.env.MAIL_SENDER_NAME || 'Fund Manager',
+    email: process.env.MAIL_USER || 'upgradeschoolsupport@gmail.com',
+  };
+  sendSmtpEmail.to = [{ email: to }];
+  sendSmtpEmail.replyTo = {
+    email: process.env.MAIL_USER || 'upgradeschoolsupport@gmail.com',
+  };
 
-  console.log(`[Email Sent] To: ${to} | Message ID: ${data.id}`);
-  return data;
+  const result = await client.sendTransacEmail(sendSmtpEmail);
+  console.log(`[Email Sent via Brevo] To: ${to} | MessageId: ${result.body?.messageId}`);
+  return result;
 };
 
 // --- Email Templates ---
