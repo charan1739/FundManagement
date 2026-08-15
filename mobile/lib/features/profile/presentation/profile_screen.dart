@@ -61,21 +61,22 @@ class ProfileScreen extends ConsumerWidget {
             _MenuItem(icon: LucideIcons.fileText, label: AppStrings.myRequests, subtitle: 'View all your fund requests', onTap: () => context.push('/profile/requests')),
             _MenuItem(icon: LucideIcons.lock, label: AppStrings.changePassword, subtitle: 'Update your security credentials', onTap: () => context.push('/profile/password')),
           ]),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
+          
+          Padding(
+            padding: const EdgeInsets.only(left: 8, bottom: 8),
+            child: Text('Settings', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
+          ),
           _MenuSection(items: [
             _MenuItem(icon: LucideIcons.shield, label: 'Privacy Policy', onTap: () => launchUrl(Uri.parse('https://upgradeschool.in/fund-manager/privacy-policy'), mode: LaunchMode.externalApplication)),
             _MenuItem(icon: LucideIcons.fileText, label: 'Terms & Conditions', onTap: () => launchUrl(Uri.parse('https://upgradeschool.in/fund-manager/terms'), mode: LaunchMode.externalApplication)),
+            _MenuItem(icon: LucideIcons.trash2, label: AppStrings.deleteAccount, color: AppColors.danger, onTap: handleDelete),
           ]),
-          const SizedBox(height: 16),
+          
+          const SizedBox(height: 24),
           _MenuSection(items: [
             _MenuItem(icon: LucideIcons.logOut, label: AppStrings.signOut, onTap: handleLogout),
           ]),
-          const SizedBox(height: 24),
-          Center(child: TextButton.icon(
-            onPressed: handleDelete,
-            icon: const Icon(LucideIcons.trash2, size: 16, color: AppColors.danger),
-            label: Text(AppStrings.deleteAccount, style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.danger)),
-          )),
           const SizedBox(height: 40),
         ],
       ),
@@ -100,8 +101,8 @@ class _MenuSection extends StatelessWidget {
         return Column(children: [
           ListTile(
             leading: Container(width: 40, height: 40, decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(10)),
-              child: Icon(item.icon, size: 20, color: AppColors.textSecondary)),
-            title: Text(item.label, style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.textPrimary)),
+              child: Icon(item.icon, size: 20, color: item.color ?? AppColors.textSecondary)),
+            title: Text(item.label, style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500, color: item.color ?? AppColors.textPrimary)),
             subtitle: item.subtitle != null ? Text(item.subtitle!, style: GoogleFonts.inter(fontSize: 12, color: AppColors.textMuted)) : null,
             trailing: const Icon(LucideIcons.chevronRight, size: 18, color: AppColors.textMuted),
             onTap: item.onTap,
@@ -118,5 +119,6 @@ class _MenuItem {
   final String label;
   final String? subtitle;
   final VoidCallback? onTap;
-  const _MenuItem({required this.icon, required this.label, this.subtitle, this.onTap});
+  final Color? color;
+  const _MenuItem({required this.icon, required this.label, this.subtitle, this.onTap, this.color});
 }
