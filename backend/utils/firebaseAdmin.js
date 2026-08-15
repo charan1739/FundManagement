@@ -7,17 +7,26 @@ let initialized = false;
 const initFirebaseAdmin = () => {
   if (initialized) return;
   try {
-    // Check if the service account file exists
-    const serviceAccountPath = path.join(__dirname, '..', 'fund-management-20ad5-firebase-adminsdk-fbsvc-2ca1536e50.json');
-    if (!fs.existsSync(serviceAccountPath)) {
-      console.log('[Firebase Admin] Service account file not found, skipping FCM initialization.');
-      return;
+    let serviceAccount;
+
+    // 1. Try to load from Environment Variable (Production / Render)
+    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+      serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    } 
+    // 2. Fall back to local file (Local Development)
+    else {
+      const serviceAccountPath = path.join(__dirname, '..', 'fund-management-20ad5-firebase-adminsdk-fbsvc-2ca1536e50.json');
+      if (!fs.existsSync(serviceAccountPath)) {
+        console.log('[Firebase Admin] Service account not found in env or local file. Skipping FCM initialization.');
+        return;
+      }
+      serviceAccount = require(serviceAccountPath);
     }
     
-    const serviceAccount = require(serviceAccountPath);
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
     });
+    
     initialized = true;
     console.log('[Firebase Admin] Initialized successfully');
   } catch (error) {
