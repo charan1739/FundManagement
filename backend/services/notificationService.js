@@ -1,7 +1,8 @@
 const Notification = require('../models/Notification');
 const User = require('../models/User');
 const { NOTIFICATION_TYPES } = require('../config/constants');
-const { getAdmin } = require('../utils/firebaseAdmin');
+const { isInitialized } = require('../utils/firebaseAdmin');
+const { getMessaging } = require('firebase-admin/messaging');
 
 /**
  * Create a notification for one or more recipients.
@@ -20,8 +21,7 @@ const createNotification = async ({ recipients, type, title, message, relatedPro
 
   // Send Push Notifications via FCM
   try {
-    const admin = getAdmin();
-    if (admin) {
+    if (isInitialized()) {
       // Find all recipients to get their FCM tokens
       const users = await User.find({ _id: { $in: recipients } }).select('fcmTokens');
       let tokens = [];
@@ -42,7 +42,7 @@ const createNotification = async ({ recipients, type, title, message, relatedPro
           },
           tokens: tokens
         };
-        const response = await admin.messaging().sendEachForMulticast(payload);
+        const response = await getMessaging().sendEachForMulticast(payload);
         console.log(`[FCM] Sent notifications: ${response.successCount} successful, ${response.failureCount} failed.`);
       }
     }

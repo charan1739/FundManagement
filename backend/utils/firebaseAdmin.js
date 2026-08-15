@@ -1,11 +1,15 @@
-const admin = require('firebase-admin');
+const { initializeApp, cert, getApps } = require('firebase-admin/app');
 const path = require('path');
 const fs = require('fs');
 
 let initialized = false;
 
 const initFirebaseAdmin = () => {
-  if (initialized) return;
+  if (getApps().length > 0) {
+    initialized = true;
+    return;
+  }
+  
   try {
     let serviceAccount;
 
@@ -23,8 +27,8 @@ const initFirebaseAdmin = () => {
       serviceAccount = require(serviceAccountPath);
     }
     
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
+    initializeApp({
+      credential: cert(serviceAccount),
     });
     
     initialized = true;
@@ -34,9 +38,9 @@ const initFirebaseAdmin = () => {
   }
 };
 
-const getAdmin = () => {
+const isInitialized = () => {
   if (!initialized) initFirebaseAdmin();
-  return initialized ? admin : null;
+  return initialized;
 };
 
-module.exports = { initFirebaseAdmin, getAdmin };
+module.exports = { initFirebaseAdmin, isInitialized };
