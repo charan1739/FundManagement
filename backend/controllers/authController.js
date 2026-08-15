@@ -123,10 +123,11 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
     res.status(200).json({ success: true, message: 'Email sent' });
   } catch (err) {
+    console.error('[ForgotPassword] Email send failed:', err?.message || err);
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save({ validateBeforeSave: false });
-    return res.status(500).json({ success: false, message: 'Email could not be sent' });
+    return res.status(500).json({ success: false, message: `Email could not be sent: ${err?.message || 'Unknown error'}` });
   }
 });
 
