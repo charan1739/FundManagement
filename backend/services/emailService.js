@@ -1,24 +1,16 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-let transporter = null;
+let resendClient = null;
 
-const getTransporter = () => {
-  if (!transporter && process.env.MAIL_ENABLED === 'true') {
-    transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: parseInt(process.env.MAIL_PORT) || 587,
-      secure: false,
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
-    });
+const getResendClient = () => {
+  if (!resendClient) {
+    resendClient = new Resend(process.env.RESEND_API_KEY);
   }
-  return transporter;
+  return resendClient;
 };
 
 /**
- * Send an email. If MAIL_ENABLED is not 'true', logs the email instead.
+ * Send an email via Resend. If MAIL_ENABLED is not 'true', logs the email instead.
  */
 const sendEmail = async ({ to, subject, html, text }) => {
   if (process.env.MAIL_ENABLED !== 'true') {
@@ -26,17 +18,22 @@ const sendEmail = async ({ to, subject, html, text }) => {
     return { skipped: true };
   }
 
-  const t = getTransporter();
-  const info = await t.sendMail({
-    from: process.env.MAIL_FROM,
+  const client = getResendClient();
+  const { data, error } = await client.emails.send({
+    from: process.env.MAIL_FROM || 'Fund Manager <onboarding@resend.dev>',
     to,
     subject,
     text: text || subject,
     html,
   });
 
-  console.log(`[Email Sent] To: ${to} | Message ID: ${info.messageId}`);
-  return info;
+  if (error) {
+    console.error(`[Email Error] To: ${to} | Error: ${JSON.stringify(error)}`);
+    throw new Error(error.message || 'Failed to send email via Resend');
+  }
+
+  console.log(`[Email Sent] To: ${to} | Message ID: ${data.id}`);
+  return data;
 };
 
 // --- Email Templates ---
