@@ -1,7 +1,7 @@
 name: fund_manager
 description: Project Fund Manager - Group-based project finance management app.
 publish_to: 'none'
-version: 1.0.1+2
+version: 1.0.2+3
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -62,3 +62,4 @@ flutter:
 
   assets:
     - assets/.env
+    - assets/icon.png

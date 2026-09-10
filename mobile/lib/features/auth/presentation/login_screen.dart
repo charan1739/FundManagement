@@ -58,9 +58,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const SizedBox(height: 60),
               // Logo
               Container(
-                width: 72, height: 72,
-                decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(20)),
-                child: const Icon(LucideIcons.wallet, size: 36, color: AppColors.textPrimary),
+                width: 76,
+                height: 76,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.25),
+                      blurRadius: 16,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset(
+                    'assets/icon.png',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Icon(LucideIcons.wallet, size: 36, color: AppColors.textPrimary),
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 20),
               Text(AppStrings.appName, style: GoogleFonts.inter(fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
